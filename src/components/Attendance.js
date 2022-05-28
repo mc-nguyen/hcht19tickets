@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Divider, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 
 class Attendance extends React.Component {
     constructor(props) {
@@ -42,6 +42,7 @@ class Attendance extends React.Component {
                     <TextField InputLabelProps={{shrink: true}} type='date' style={this.state.fieldMargin} fullWidth required
                                id="outline-basic" label="Ngày bán" variant="outlined"
                                value={this.state.date}
+                               sx={{my:2}}
                                onChange={(e) => this.setState({date: e.target.value})}
                     />
                     <TextField InputLabelProps={{shrink: true}} type='time' style={this.state.fieldMargin} fullWidth required
@@ -49,6 +50,7 @@ class Attendance extends React.Component {
                                value={this.state.time}
                                onChange={(e) => this.setState({time: e.target.value})}
                     />
+                    <Divider sx={{my:3}}/>
                     <TextField
                         id="outlined-multiline-flexible"
                         label="Members bán vé"

@@ -1,9 +1,9 @@
 import React from 'react';
 import {Calculate, Church, Note, People} from '@mui/icons-material';
-import {Drawer, Link, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+import {Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 
 export default function MenuLink(props) {
-    const list = [
+    const tabList = [
         {
             name: 'Bảng Tính',
             icon: <Calculate/>,
@@ -23,29 +23,33 @@ export default function MenuLink(props) {
             name: 'Report',
             icon: <Note/>,
             link: '/report'
-        },
+        }
     ]
 
     return(
-        <Drawer
-            anchor={'left'}
-            open={true}
-            onClose={props.close}
-        >
-            <List>
-                {
-                    list.map((item, index) => (
-                        <ListItem key={item.name} disablePadding>
-                            <Link href={item.link}>
+        <React.Fragment>
+            <Drawer
+                open={props.opened}
+                onClose={props.close()}
+                transitionDuration={16}
+                elevation={16}
+                sx={{
+                    padding: 50
+                }}
+            >
+                <List>
+                    {
+                        tabList.map((item, index) => (
+                            <ListItem key={index} disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon>{item.icon}</ListItemIcon>
                                     <ListItemText primary={item.name}/>
                                 </ListItemButton>
-                            </Link>
-                        </ListItem>
-                    ))
-                }
-            </List>
-        </Drawer>
+                            </ListItem>
+                        ))
+                    }
+                </List>
+            </Drawer>
+        </React.Fragment>
     );
 };

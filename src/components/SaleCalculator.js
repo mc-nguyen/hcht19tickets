@@ -6,7 +6,9 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Button, Divider,
+    Button,
+    Divider,
+    Box, Fab
 } from "@mui/material";
 import {Backup, Calculate} from "@mui/icons-material";
 
@@ -36,35 +38,25 @@ class SaleCalculator extends React.Component {
         }
     }
 
-    componentDidMount() {
-        setInterval(() => {
-            console.log(this.state);
-            // this.props.editShift(
-            //     this.state.coordinator,
-            //     this.state.location,
-            //     this.state.date,
-            //     this.state.time,
-            // );
-            console.log(this.props.shift)
-            console.log(this.props.summary)
-        }, 5000);
-    }
-
     calculate = () => {
         let sold = this.state.totalTickets - this.state.leftTickets;
         let profit = sold * 25;
         let donation = this.state.totalAmount - profit - this.state.beginningChange;
-        this.props.editSummary(sold, profit, donation);
-        console.log(this.props.summary)
+        console.log([sold, profit, donation]);
     }
 
     render() {
         return (
-            <div style={{padding: '0 5px 10%'}}>
-                <h1 text-align='center'>Bảng Tính Tiền Vé</h1>
+            <div>
 
-                <div style={{background: "white"}}>
-                    <FormGroup row>
+                <Box sx={{pr:3, bgcolor: 'white'}}>
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            columnGap: 2,
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                        }}
+                    >
                         <TextField style={this.state.fieldMargin}
                                    fullWidth
                                    required
@@ -100,9 +92,15 @@ class SaleCalculator extends React.Component {
                                    value={this.state.time}
                                    onChange={(e) => this.setState({time: e.target.value})}
                         />
-                    </FormGroup>
-                    <Divider/>
-                    <FormGroup row>
+                    </Box>
+                    <Divider sx={{my:3}}/>
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            columnGap: 2,
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                        }}
+                    >
                         <TextField type='number' style={this.state.fieldMargin} fullWidth required id="outline-basic"
                                    label="Tiền lẻ (đơn vị: dollar)" variant="outlined"
                                    value={this.state.beginningChange}
@@ -123,20 +121,25 @@ class SaleCalculator extends React.Component {
                                    value={this.state.leftTickets}
                                    onChange={(e)=>this.setState({leftTickets: e.target.value})}
                         />
-                    </FormGroup>
-                </div>
+                    </Box>
+                </Box>
 
-                <Button style={this.state.calStyle} variant="contained" color="success" onClick={this.calculate}>
+                <Fab variant="extended"
+                     sx={{right:16,
+                         bottom:16,
+                         position:'fixed',
+                         bgcolor:'green',
+                         '&:hover': {
+                             bgcolor: 'green',
+                         },
+                         color: 'white'
+                }}>
                     <Calculate sx={{mr: 1}}/>
-                    Tính toán
-                </Button>
-                <Button style={this.state.calStyle} variant="contained" color="success">
-                    <Backup sx={{mr: 1}}/>
-                    Cập nhật
-                </Button>
+                    Tính Toán
+                </Fab>
             </div>
         );
     }
-};
+}
 
 export default SaleCalculator

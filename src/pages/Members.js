@@ -1,6 +1,6 @@
 import React from "react";
 import Attendance from "../components/Attendance";
-import {Button} from "@mui/material";
+import {Fab} from "@mui/material";
 import {Backup} from "@mui/icons-material";
 
 class Members extends React.Component {
@@ -26,7 +26,6 @@ class Members extends React.Component {
     render() {
         return (
             <div>
-                <h1 text-align="center">Điểm Danh Member</h1>
                 <Attendance members={this.state.members}
                             editMembers={(m) => this.setState({members: m})}
                             info={{
@@ -40,10 +39,19 @@ class Members extends React.Component {
                                 time: t
                             })}
                 />
-                <Button style={this.calStyle} variant="contained" color="success" onClick={this.exportMemberList}>
-                    <Backup sx={{ mr: 1 }} />
-                    Cập nhật
-                </Button>
+                <Fab variant="extended"
+                     sx={{right:16,
+                         bottom:16,
+                         position:'fixed',
+                         bgcolor:'green',
+                         '&:hover': {
+                             bgcolor: 'green',
+                         },
+                         color: 'white'
+                     }}>
+                    <Backup sx={{mr: 1}}/>
+                    Cập Nhật
+                </Fab>
             </div>
         )
     }
