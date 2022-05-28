@@ -6,7 +6,7 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Button,
+    Button, Divider,
 } from "@mui/material";
 import {Backup, Calculate} from "@mui/icons-material";
 
@@ -101,8 +101,7 @@ class SaleCalculator extends React.Component {
                                    onChange={(e) => this.setState({time: e.target.value})}
                         />
                     </FormGroup>
-                    <hr/>
-                    <hr/>
+                    <Divider/>
                     <FormGroup row>
                         <TextField type='number' style={this.state.fieldMargin} fullWidth required id="outline-basic"
                                    label="Tiền lẻ (đơn vị: dollar)" variant="outlined"

@@ -1,32 +1,42 @@
 import * as React from 'react';
-import {AdminPanelSettings,
-    Calculate,
-    EmojiPeople
+import {Menu
 } from "@mui/icons-material";
 import {
-    Paper,
-    BottomNavigation,
-    BottomNavigationAction,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Typography
 } from "@mui/material";
+import MenuLink from "./MenuLink";
 
 class BotNav extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            drawer: false
+        }
+    }
     render() {
         return(
-            <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
-                <BottomNavigation
-                    showLabels
-                    value={this.props.value}
-                    onChange={(event, newValue) => {
-                        this.props.setValue(newValue);
-                        console.log(newValue);
-                    }}
-                    style={{background: (this.props.value===0) ? "orangered" : ((this.props.value===1) ? "#33FFBD" : "#DBFF33")}}
-                >
-                    <BottomNavigationAction style={{color: (this.props.value===0) ? "#33FFBD" : ""}} label="Bảng Tính" icon={<Calculate />} />
-                    <BottomNavigationAction style={{color: (this.props.value===1) ? "#FF5733" : ""}} label="Điểm Danh" icon={<EmojiPeople />} />
-                    <BottomNavigationAction style={{color: (this.props.value===2) ? "#581845" : ""}} label="Báo Cáo" icon={<AdminPanelSettings />} />
-                </BottomNavigation>
-            </Paper>
+            <div>
+                <AppBar position="fixed">
+                    <Toolbar>
+                        <IconButton
+                          size="large"
+                          edge="start"
+                          color="inherit"
+                          aria-label="menu"
+                          sx={{ mr: 2 }}
+                        >
+                            <Menu/>
+                        </IconButton>
+                        <Typography variant="h6" color="inherit">
+                          {this.props.title}
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <MenuLink/>
+            </div>
         );
     }
 }

@@ -1,7 +1,5 @@
 import React from 'react';
 import SaleCalculator from "../components/SaleCalculator";
-import Attendance from "../components/Attendance";
-import Report from "../components/Report";
 import BotNav from "../components/BotNav";
 
 class HomePage extends React.Component {
@@ -27,36 +25,27 @@ class HomePage extends React.Component {
     render() {
         return(
             <div>
-                {(this.state.chosenTab === 0) ?
-                    (<SaleCalculator shift={this.state.saleShift}
-                                     editShift={(board, church, newDate, newTime) => {
-                                         this.setState({saleShift: {
-                                                 coordinator: board,
-                                                 location: church,
-                                                 date: newDate,
-                                                 time: newTime
-                                             }});
-                                     }}
-                                     summary={this.state.saleSummary}
-                                     editSummary={(sold, profited, donated) => {
-                                         this.setState({saleSummary: {
-                                                 soldTickets: sold,
-                                                 profit: profited,
-                                                 donation: donated
-                                             }});
-                                     }}
-                    />) :
-                    (this.state.chosenTab === 1) ?
-                        (<Attendance members={this.state.members}
-                                     editMembers={(memberList) => {
-                                         this.setState({members: memberList})
-                                     }}
-                        />) :
-                        (<Report/>)
-                }
-                <BotNav value={this.state.chosenTab}
-                        setValue={(newTab) => this.setState({chosenTab: newTab})}
-                />
+                <BotNav title="Bảng Tính Tiền Vé"/>
+                <div style={{marginTop: '10%'}}>
+                    <SaleCalculator shift={this.state.saleShift}
+                                    editShift={(board, church, newDate, newTime) => {
+                                        this.setState({saleShift: {
+                                                coordinator: board,
+                                                location: church,
+                                                date: newDate,
+                                                time: newTime
+                                            }});
+                                    }}
+                                    summary={this.state.saleSummary}
+                                    editSummary={(sold, profited, donated) => {
+                                        this.setState({saleSummary: {
+                                                soldTickets: sold,
+                                                profit: profited,
+                                                donation: donated
+                                            }});
+                                    }}
+                    />
+                </div>
             </div>
         )
     }
