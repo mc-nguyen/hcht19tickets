@@ -13,16 +13,6 @@ class Members extends React.Component {
             time: ""
         }
     }
-    calStyle = {
-        bgcolor: "#4caf50",
-        '&:hover': {
-            bgcolor: "#43a047"
-        },
-        margin: '5%',
-    }
-    exportMemberList = () => {
-        console.log(this.state)
-    }
     render() {
         return (
             <div>

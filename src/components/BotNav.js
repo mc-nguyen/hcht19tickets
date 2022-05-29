@@ -8,7 +8,6 @@ import {
     Menu as MenuComponent,
     MenuItem
 } from "@mui/material";
-import {deepPurple} from "@mui/material/colors";
 
 class BotNav extends React.Component {
     constructor(props) {
@@ -24,12 +23,6 @@ class BotNav extends React.Component {
             bgcolor: '#330066',
             color: 'white'
         }
-    }
-    handleClose = () => {
-        this.setState({
-            anchor: null,
-            open: Boolean(null)
-        })
     }
     render() {
         return(

@@ -1,6 +1,5 @@
 import React from 'react';
 import SaleCalculator from "../components/SaleCalculator";
-import BotNav from "../components/BotNav";
 
 class HomePage extends React.Component {
     render() {

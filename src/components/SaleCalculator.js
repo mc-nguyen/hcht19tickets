@@ -9,6 +9,7 @@ import {
     Box, Fab
 } from "@mui/material";
 import {Backup, Calculate} from "@mui/icons-material";
+import Result from "./Result";
 
 class SaleCalculator extends React.Component {
     constructor(props) {
@@ -148,6 +149,7 @@ class SaleCalculator extends React.Component {
                     <Backup sx={{mr: 1}}/>
                     Cập Nhật
                 </Fab>
+                <Result/>
             </div>
         );
     }
