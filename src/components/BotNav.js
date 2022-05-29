@@ -8,6 +8,7 @@ import {
     Menu as MenuComponent,
     MenuItem
 } from "@mui/material";
+import {deepPurple} from "@mui/material/colors";
 
 class BotNav extends React.Component {
     constructor(props) {
@@ -17,28 +18,13 @@ class BotNav extends React.Component {
             open: Boolean(null)
         }
     }
-    tabList = [
-        {
-            name: 'Bảng Tính',
-            icon: <Calculate/>,
-            link: '/'
-        },
-        {
-            name: 'Điểm Danh',
-            icon: <People/>,
-            link: '/members'
-        },
-        {
-            name: 'Nhà Thờ',
-            icon: <Church/>,
-            link: '/churches-config'
-        },
-        {
-            name: 'Report',
-            icon: <Note/>,
-            link: '/report'
+    styleMenuItem = {
+        py: 2,
+        '&:hover': {
+            bgcolor: '#330066',
+            color: 'white'
         }
-    ]
+    }
     handleClose = () => {
         this.setState({
             anchor: null,
@@ -85,10 +71,26 @@ class BotNav extends React.Component {
                     }}
                     sx={{mt:3}}
                 >
-                    <MenuItem onClick={()=>window.location.pathname='/'}><Calculate sx={{mr:2}}/>Bảng Tính Tiền Vé</MenuItem>
-                    <MenuItem onClick={()=>window.location.pathname='/members'}><People sx={{mr:2}}/>Điểm Danh</MenuItem>
-                    <MenuItem onClick={()=>window.location.pathname='/churches-config'}><Church sx={{mr:2}}/>Danh Sách Nhà Thờ</MenuItem>
-                    <MenuItem onClick={()=>window.location.pathname='/report'}><Note sx={{mr:2}}/>Kiểm Kê</MenuItem>
+                    <MenuItem onClick={()=>window.location.pathname='/' }
+                              sx={this.styleMenuItem}
+                    >
+                        <Calculate sx={{mr:2}}/>Bảng Tính Tiền
+                    </MenuItem>
+                    <MenuItem onClick={()=>window.location.pathname='/members'}
+                              sx={this.styleMenuItem}
+                    >
+                        <People sx={{mr:2}}/>Điểm Danh
+                    </MenuItem>
+                    <MenuItem onClick={()=>window.location.pathname='/churches-config'}
+                              sx={this.styleMenuItem}
+                    >
+                        <Church sx={{mr:2}}/>Danh Sách Nhà Thờ
+                    </MenuItem>
+                    <MenuItem onClick={()=>window.location.pathname='/report'}
+                              sx={this.styleMenuItem}
+                    >
+                        <Note sx={{mr:2}}/>Kiểm Kê
+                    </MenuItem>
                 </MenuComponent>
             </div>
         );

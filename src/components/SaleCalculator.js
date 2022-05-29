@@ -1,12 +1,10 @@
 import React from "react";
 import {
-    FormGroup,
     TextField,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
-    Button,
     Divider,
     Box, Fab
 } from "@mui/material";
@@ -125,6 +123,19 @@ class SaleCalculator extends React.Component {
                 </Box>
 
                 <Fab variant="extended"
+                     sx={{left:16,
+                         bottom:16,
+                         position:'fixed',
+                         bgcolor:'green',
+                         '&:hover': {
+                             bgcolor: 'green',
+                         },
+                         color: 'white'
+                     }}>
+                    <Calculate sx={{mr: 1}}/>
+                    Tính Toán
+                </Fab>
+                <Fab variant="extended"
                      sx={{right:16,
                          bottom:16,
                          position:'fixed',
@@ -133,9 +144,9 @@ class SaleCalculator extends React.Component {
                              bgcolor: 'green',
                          },
                          color: 'white'
-                }}>
-                    <Calculate sx={{mr: 1}}/>
-                    Tính Toán
+                     }}>
+                    <Backup sx={{mr: 1}}/>
+                    Cập Nhật
                 </Fab>
             </div>
         );
