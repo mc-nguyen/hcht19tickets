@@ -26,14 +26,15 @@ class SaleCalculator extends React.Component {
                 margin: 10,
                 color: "white"
             },
-            coordinator: this.props.coordinator,
-            location: this.props.location,
-            date: this.props.date,
-            time: this.props.time,
+            coordinator: '',
+            location: '',
+            date: '',
+            time: '',
             beginningChange: 0,
-            totalAmount:0,
+            totalAmount: 0,
             totalTickets: 0,
-            leftTickets: 0
+            leftTickets: 0,
+            result: false
         }
     }
 
@@ -42,6 +43,11 @@ class SaleCalculator extends React.Component {
         let profit = sold * 25;
         let donation = this.state.totalAmount - profit - this.state.beginningChange;
         console.log([sold, profit, donation]);
+        return {
+            sold: sold,
+            profit: profit,
+            donation: donation
+        }
     }
 
     render() {
@@ -132,7 +138,9 @@ class SaleCalculator extends React.Component {
                              bgcolor: 'green',
                          },
                          color: 'white'
-                     }}>
+                     }}
+                     onClick={()=>this.setState({result: true})}
+                >
                     <Calculate sx={{mr: 1}}/>
                     Tính Toán
                 </Fab>
@@ -149,7 +157,20 @@ class SaleCalculator extends React.Component {
                     <Backup sx={{mr: 1}}/>
                     Cập Nhật
                 </Fab>
-                <Result/>
+                <Result result={this.state.result}
+                        closeResult={()=>this.setState({result: false})}
+                        info={{
+                            coordinator: this.state.coordinator,
+                            location: this.state.location,
+                            date: this.state.date,
+                            time: this.state.time
+                        }}
+                        calculated={{
+                            sold: this.state.totalTickets - this.state.leftTickets,
+                            profit: (this.state.totalTickets - this.state.leftTickets) * 25,
+                            donation: this.state.totalAmount - (this.state.totalTickets - this.state.leftTickets) * 25 - this.state.beginningChange
+                        }}
+                />
             </div>
         );
     }
