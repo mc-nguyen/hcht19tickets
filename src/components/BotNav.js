@@ -27,7 +27,7 @@ class BotNav extends React.Component {
     render() {
         return(
             <div>
-                <AppBar position="fixed" sx={{ mr: 0}}>
+                <AppBar position="fixed">
                     <Toolbar>
                         <IconButton
                             id='menu'
@@ -38,7 +38,7 @@ class BotNav extends React.Component {
                             aria-controls={this.state.open ? 'basic-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={this.state.open ? 'true' : undefined}
-                            sx={{ mr: 2, ml: 10 }}
+                            sx={{ mr: 2, ml: '5%' }}
                             onClick={(e) => this.setState({
                                 anchor: e.target,
                                 open: Boolean(e.target)

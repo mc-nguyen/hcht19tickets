@@ -1,7 +1,9 @@
 import React from "react";
 import Attendance from "../components/Attendance";
-import {Fab} from "@mui/material";
+import {Alert, Fab, Snackbar} from "@mui/material";
 import {Backup} from "@mui/icons-material";
+import {doc, setDoc} from "firebase/firestore";
+import db from "../Firebase";
 
 class Members extends React.Component {
     constructor(props) {
@@ -10,9 +12,44 @@ class Members extends React.Component {
             members: [],
             location: "",
             date: "",
-            time: ""
+            time: "",
+            success: true,
+            notification: true
         }
     }
+
+    componentDidMount() {
+        setInterval(()=> {
+
+        },1000)
+    }
+
+    exportData2Firebase = () => {
+        const church = this.state.location.split(' ').reverse[0];
+        const date = new Date(this.state.date);
+        const [month, day] = [date.getMonth(), date.getDate()+1];
+        const hour = "-" + this.state.time.split(':')[0];
+        const result = doc(db, 'members', 'members-' + church + month + day + hour);
+        setDoc(result, {
+            members: this.state.members,
+            location: this.state.location,
+            date: this.state.date,
+            time: this.state.time,
+        }, {merge: true}).then(r => {
+            console.log("Succeeded export to firestore!");
+            this.setState({
+                success: true,
+                notification: true,
+            });
+        }).catch(e => {
+            console.log(e);
+            this.setState({
+                success: false,
+                notification: true,
+            });
+        })
+    }
+
     render() {
         return (
             <div>
@@ -38,10 +75,28 @@ class Members extends React.Component {
                              bgcolor: 'green',
                          },
                          color: 'white'
-                     }}>
+                     }}
+                     onClick={this.exportData2Firebase}
+                >
                     <Backup sx={{mr: 1}}/>
                     Cập Nhật
                 </Fab>
+                <Snackbar
+                    open={this.state.notification}
+                    autoHideDuration={5000}
+                    onClose={() => this.setState({notification: false})}
+                    message={this.state.message}
+                >
+                    {(this.state.success) ? <Alert onClose={() => this.setState({notification: false})}
+                                                   severity="success"
+                                                   variant="filled"
+                    >Điểm danh cập nhật thành công!
+                    </Alert> : <Alert onClose={() => this.setState({notification: false})}
+                                      variant="filled"
+                                      severity="error"
+                    >Điểm danh không thể cập nhật, vui lòng kiểm tra lại!
+                    </Alert>}
+                </Snackbar>
             </div>
         )
     }

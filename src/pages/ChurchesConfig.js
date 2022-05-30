@@ -1,9 +1,53 @@
 import React from "react";
-import {Avatar, Box, Button, IconButton, ListItem, ListItemAvatar, ListItemText, TextField} from "@mui/material";
+import {
+    Alert,
+    Avatar,
+    Box,
+    Button,
+    IconButton,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Snackbar,
+    TextField
+} from "@mui/material";
 import {Church, Delete, Send} from "@mui/icons-material";
 import {deepPurple} from "@mui/material/colors";
+import {doc, setDoc} from "firebase/firestore";
+import db from "../Firebase";
 
 class ChurchesConfig extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            churches: [],
+            currentAdded: '',
+            success: true,
+            notification: false
+        }
+    }
+
+    exportData2Firebase = () => {
+        const churchArr = this.state.currentAdded.replace(' ','');
+        const result = doc(db, 'churches', 'church-'+churchArr.toLowerCase());
+        setDoc(result, {
+            added: Date.now(),
+            fullName: this.state.currentAdded
+        }, {merge: true}).then(r => {
+            console.log("Succeeded export to firestore!");
+            this.setState({
+                success: true,
+                notification: true,
+            });
+        }).catch(e => {
+            console.log(e);
+            this.setState({
+                success: false,
+                notification: true,
+            });
+        })
+    }
+
     render() {
         return (
             <Box sx={{
@@ -35,11 +79,32 @@ class ChurchesConfig extends React.Component {
                                variant="standard"
                                fullWidth
                                sx={{mr: 2}}
+                               value={this.state.currentAdded}
+                               onChange={(e)=>this.setState({currentAdded: e.target.value})}
                     />
-                    <Button variant="contained" endIcon={<Send />}>
+                    <Button variant="contained"
+                            endIcon={<Send />}
+                            onClick={this.exportData2Firebase}
+                    >
                         Thêm
                     </Button>
                 </Box>
+                <Snackbar
+                    open={this.state.notification}
+                    autoHideDuration={5000}
+                    onClose={() => this.setState({notification: false})}
+                    message={this.state.message}
+                >
+                    {(this.state.success) ? <Alert onClose={() => this.setState({notification: false})}
+                                                   severity="success"
+                                                   variant="filled"
+                    >Thêm nhà thờ thành công!
+                    </Alert> : <Alert onClose={() => this.setState({notification: false})}
+                                      variant="filled"
+                                      severity="error"
+                    >Lỗi thêm nhà thờ, vui lòng kiểm tra lại!
+                    </Alert>}
+                </Snackbar>
             </Box>
         )
     }

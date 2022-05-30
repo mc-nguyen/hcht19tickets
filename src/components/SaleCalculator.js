@@ -6,10 +6,12 @@ import {
     Select,
     MenuItem,
     Divider,
-    Box, Fab
+    Box, Fab, CardMedia, Snackbar, Alert
 } from "@mui/material";
 import {Backup, Calculate} from "@mui/icons-material";
 import Result from "./Result";
+import { doc, setDoc } from "firebase/firestore";
+import db from "../Firebase";
 
 class SaleCalculator extends React.Component {
     constructor(props) {
@@ -34,27 +36,59 @@ class SaleCalculator extends React.Component {
             totalAmount: 0,
             totalTickets: 0,
             leftTickets: 0,
-            result: false
+            result: false,
+            image: null,
+            notification: false,
+            success: true
         }
     }
 
-    calculate = () => {
-        let sold = this.state.totalTickets - this.state.leftTickets;
-        let profit = sold * 25;
-        let donation = this.state.totalAmount - profit - this.state.beginningChange;
-        console.log([sold, profit, donation]);
-        return {
-            sold: sold,
-            profit: profit,
-            donation: donation
-        }
+    componentDidMount() {
+        setInterval(() => {
+            this.setState({sold : this.state.totalTickets - this.state.leftTickets});
+            this.setState({profit : this.state.sold * 25});
+            this.setState({donation : this.state.totalAmount - this.state.profit - this.state.beginningChange});
+        }, 1000)
+    }
+
+    exportDataToFirestore = () => {
+        const church = this.state.location.split(' ').reverse[0];
+        const date = new Date(this.state.date);
+        const [month, day] = [date.getMonth(), date.getDate()+1];
+        const hour = "-" + this.state.time.split(':')[0];
+        const result = doc(db, 'ticket-results', 'result-' + church + month + day + hour);
+        setDoc(result, {
+            coordinator: this.state.coordinator,
+            location: this.state.location,
+            date: this.state.date,
+            time: this.state.time,
+            beginningChange: this.state.beginningChange,
+            totalAmount: this.state.totalAmount,
+            totalTickets: this.state.totalTickets,
+            leftTickets: this.state.leftTickets,
+            sold: this.state.sold,
+            profit: this.state.profit,
+            donation: this.state.donation
+        }, {merge: true}).then(r => {
+            console.log("Succeeded export to firestore!");
+            this.setState({
+                success: true,
+                notification: true,
+            });
+        }).catch(e => {
+            console.log(e);
+            this.setState({
+                success: false,
+                notification: true,
+            });
+        })
     }
 
     render() {
         return (
             <div>
 
-                <Box sx={{pr:3, bgcolor: 'white'}}>
+                <Box sx={{pr:2.5, pt: 2, bgcolor: 'white', borderRadius: 1}}>
                     <Box
                         sx={{
                             display: 'grid',
@@ -127,6 +161,22 @@ class SaleCalculator extends React.Component {
                                    onChange={(e)=>this.setState({leftTickets: e.target.value})}
                         />
                     </Box>
+                    <Divider sx={{my:3}}/>
+                    <Box sx={{
+                        color: 'black',
+                        pb: 3, pl: 3
+                    }}>
+                    {
+                        (this.state.image !== null) ? (
+                            <CardMedia component='img'
+                                       image={this.state.image}
+                                       alt="Result"
+                            />
+                        ) : (
+                            <i>Chưa Có Dữ Liệu!</i>
+                        )
+                    }
+                    </Box>
                 </Box>
 
                 <Fab variant="extended"
@@ -153,7 +203,9 @@ class SaleCalculator extends React.Component {
                              bgcolor: 'green',
                          },
                          color: 'white'
-                     }}>
+                     }}
+                     onClick={this.exportDataToFirestore}
+                >
                     <Backup sx={{mr: 1}}/>
                     Cập Nhật
                 </Fab>
@@ -165,12 +217,35 @@ class SaleCalculator extends React.Component {
                             date: this.state.date,
                             time: this.state.time
                         }}
-                        calculated={{
-                            sold: this.state.totalTickets - this.state.leftTickets,
-                            profit: (this.state.totalTickets - this.state.leftTickets) * 25,
-                            donation: this.state.totalAmount - (this.state.totalTickets - this.state.leftTickets) * 25 - this.state.beginningChange
+                        input={{
+                            beginningChange: this.state.beginningChange,
+                            totalAmount: this.state.totalAmount,
+                            totalTickets: this.state.totalTickets,
+                            leftTickets: this.state.leftTickets,
                         }}
+                        calculated={{
+                            sold: this.state.sold,
+                            profit: this.state.profit,
+                            donation: this.state.donation,
+                        }}
+                        image={(imageURL) => this.setState({image: imageURL})}
                 />
+                <Snackbar
+                    open={this.state.notification}
+                    autoHideDuration={5000}
+                    onClose={() => this.setState({notification: false})}
+                    message={this.state.message}
+                >
+                    {(this.state.success) ? <Alert onClose={() => this.setState({notification: false})}
+                                                   severity="success"
+                                                   variant="filled"
+                    >Dữ liệu cập nhật thành công!
+                    </Alert> : <Alert onClose={() => this.setState({notification: false})}
+                                      variant="filled"
+                                      severity="error"
+                    >Dữ liệu không thể cập nhật, vui lòng kiểm tra lại!
+                    </Alert>}
+                </Snackbar>
             </div>
         );
     }
