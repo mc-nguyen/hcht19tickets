@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import {Backup, Calculate} from "@mui/icons-material";
 import Result from "./Result";
-import { doc, setDoc } from "firebase/firestore";
+import {collection, doc, getDocs, setDoc} from "firebase/firestore";
 import db from "../Firebase";
 
 class SaleCalculator extends React.Component {
@@ -39,7 +39,8 @@ class SaleCalculator extends React.Component {
             result: false,
             image: null,
             notification: false,
-            success: true
+            success: true,
+            churches: []
         }
     }
 
@@ -49,6 +50,17 @@ class SaleCalculator extends React.Component {
             this.setState({profit : this.state.sold * 25});
             this.setState({donation : this.state.totalAmount - this.state.profit - this.state.beginningChange});
         }, 1000)
+        this.importChurchesFromFirestore().then();
+    }
+
+    importChurchesFromFirestore = async () => {
+        const querySnapshot = await getDocs(collection(db, "churches"));
+        let churchesFromFirebase = []
+        querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            churchesFromFirebase = [...churchesFromFirebase, doc.data().fullName]
+        });
+        this.setState({churches: churchesFromFirebase});
     }
 
     exportDataToFirestore = () => {
@@ -87,7 +99,6 @@ class SaleCalculator extends React.Component {
     render() {
         return (
             <div>
-
                 <Box sx={{pr:2.5, pt: 2, bgcolor: 'white', borderRadius: 1}}>
                     <Box
                         sx={{
@@ -116,9 +127,11 @@ class SaleCalculator extends React.Component {
                                     labelId="demo-simple-select-helper-label"
                                     id="demo-simple-select-helper"
                             >
-                                <MenuItem value="St. Barbara">St. Barbara</MenuItem>
-                                <MenuItem value="La Vang">La Vang</MenuItem>
-                                <MenuItem value="Westminster">Westminster</MenuItem>
+                                {
+                                    this.state.churches.map((church, index) => (
+                                        <MenuItem value={church} key={index}>{church}</MenuItem>
+                                    ))
+                                }
                             </Select>
                         </FormControl>
                         <TextField InputLabelProps={{shrink: true}} type='date' style={this.state.fieldMargin} fullWidth required

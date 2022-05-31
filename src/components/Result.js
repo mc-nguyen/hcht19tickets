@@ -38,9 +38,9 @@ class Result extends React.Component {
             let [hour, minute] = this.props.info.time.split(':');
             hour = parseInt(hour);
             const timePeriod = hour < 11 ? "sáng": (
-                hour < 2 ? "trưa" : (
-                    hour < 7 ? "chiều" : (
-                        hour < 10 ? "tối" : "đêm"
+                hour < 14 ? "trưa" : (
+                    hour < 19 ? "chiều" : (
+                        hour < 22 ? "tối" : "đêm"
             )));
             hour -= hour > 12 ? 12 : 0;
             minute = parseInt(minute);

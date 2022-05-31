@@ -16,6 +16,7 @@ class BotNav extends React.Component {
             anchor: null,
             open: Boolean(null)
         }
+        document.title = props.title;
     }
     styleMenuItem = {
         py: 2,

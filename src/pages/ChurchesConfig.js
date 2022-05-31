@@ -6,7 +6,7 @@ import {
     Button,
     IconButton,
     ListItem,
-    ListItemAvatar, ListItemSecondaryAction,
+    ListItemAvatar,
     ListItemText,
     Snackbar,
     TextField,
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import {Church, Delete, Send} from "@mui/icons-material";
 import {deepPurple} from "@mui/material/colors";
-import {doc, setDoc, getDocs, collection} from "firebase/firestore";
+import {doc, setDoc, getDocs, collection, deleteDoc} from "firebase/firestore";
 import db from "../Firebase";
 
 class ChurchesConfig extends React.Component {
@@ -28,26 +28,25 @@ class ChurchesConfig extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.importDataFromFirebase().then(r => console.log('successfully read'));
+    componentWillMount() {
+        this.importDataFromFirebase().then();
     }
 
     importDataFromFirebase = async () => {
         const querySnapshot = await getDocs(collection(db, "churches"));
+        let churchesFromFirebase = []
         querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
-            const church = {
+            churchesFromFirebase = [...churchesFromFirebase, {
                 id: doc.id,
                 name: doc.data().fullName
-            };
-            this.setState({
-                churches: [...this.state.churches, church]
-            });
+            }]
         });
+        this.setState({churches: churchesFromFirebase});
     }
 
     exportData2Firebase = () => {
-        const churchArr = this.state.currentAdded.replace(' ','');
+        const churchArr = this.state.currentAdded.replaceAll(' ','');
         const result = doc(db, 'churches', 'church-'+churchArr.toLowerCase());
         setDoc(result, {
             added: Date.now(),
@@ -65,10 +64,16 @@ class ChurchesConfig extends React.Component {
                 notification: true,
             });
         })
+        this.importDataFromFirebase().then();
+        this.setState({currentAdded: ''})
     }
 
     removeItemFromFirebase = (id) => {
-        console.log(id + " worked!");
+        deleteDoc(doc(db, "churches", id)).then(r => {
+            console.log([r, "Successfully Removed!"])
+        }).catch(e => console.log(e));
+        this.importDataFromFirebase().then();
+        this.setState({notification: true})
     }
 
     render() {
@@ -76,14 +81,14 @@ class ChurchesConfig extends React.Component {
             <Box sx={{
                 my: 3, borderRadius: 3,
                 bgcolor: deepPurple[300],
-                width: 1/2
+                width: 1/3
             }}>
                 <List dense={true}>
                     { this.state.churches.map((church, index) => (
                         <ListItem key={index}
                                   secondaryAction={
                                       <IconButton edge="end" aria-label="delete"
-                                                  onClick={this.removeItemFromFirebase(church.id)}
+                                                  onClick={() => this.removeItemFromFirebase(church.id)}
                                       >
                                           <Delete/>
                                       </IconButton>
@@ -126,7 +131,7 @@ class ChurchesConfig extends React.Component {
                     {(this.state.success) ? <Alert onClose={() => this.setState({notification: false})}
                                                    severity="success"
                                                    variant="filled"
-                    >Thêm nhà thờ thành công!
+                    >Thêm/Xoá nhà thờ thành công!
                     </Alert> : <Alert onClose={() => this.setState({notification: false})}
                                       variant="filled"
                                       severity="error"
