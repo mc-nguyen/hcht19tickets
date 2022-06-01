@@ -24,12 +24,19 @@ class ChurchesConfig extends React.Component {
             churches: [],
             currentAdded: '',
             success: true,
-            notification: false
+            notification: false,
+            widthScreen: window.innerWidth
         }
     }
 
     componentWillMount() {
         this.importDataFromFirebase().then();
+        window.removeEventListener('resize', this.getWindowDimensions);
+    }
+
+    componentDidMount() {
+        this.getWindowDimensions()
+        window.addEventListener('resize', this.getWindowDimensions);
     }
 
     importDataFromFirebase = async () => {
@@ -45,27 +52,39 @@ class ChurchesConfig extends React.Component {
         this.setState({churches: churchesFromFirebase});
     }
 
+    getWindowDimensions = () => {
+        this.setState({widthScreen : window.innerWidth});
+    }
+
+    checkEmpty = () => {
+        return (this.state.currentAdded === '')
+    }
+
     exportData2Firebase = () => {
-        const churchArr = this.state.currentAdded.replaceAll(' ','');
-        const result = doc(db, 'churches', 'church-'+churchArr.toLowerCase());
-        setDoc(result, {
-            added: Date.now(),
-            fullName: this.state.currentAdded
-        }, {merge: true}).then(r => {
-            console.log("Succeeded export to firestore!");
-            this.setState({
-                success: true,
-                notification: true,
-            });
-        }).catch(e => {
-            console.log(e);
-            this.setState({
-                success: false,
-                notification: true,
-            });
-        })
-        this.importDataFromFirebase().then();
-        this.setState({currentAdded: ''})
+        const errorConfig = {
+            success: false,
+            notification: true,
+        }
+        if (this.checkEmpty()) this.setState(errorConfig)
+        else {
+            const churchArr = this.state.currentAdded.replaceAll(' ', '');
+            const result = doc(db, 'churches', 'church-' + churchArr.toLowerCase());
+            setDoc(result, {
+                added: Date.now(),
+                fullName: this.state.currentAdded
+            }, {merge: true}).then(r => {
+                console.log("Succeeded export to firestore!");
+                this.setState({
+                    success: true,
+                    notification: true,
+                });
+            }).catch(e => {
+                console.log(e);
+                this.setState(errorConfig);
+            })
+            this.importDataFromFirebase().then();
+            this.setState({currentAdded: ''})
+        }
     }
 
     removeItemFromFirebase = (id) => {
@@ -81,7 +100,8 @@ class ChurchesConfig extends React.Component {
             <Box sx={{
                 my: 3, borderRadius: 3,
                 bgcolor: deepPurple[300],
-                width: 1/3
+                width: (this.state.widthScreen > 850) ? 1/3 :
+                    (this.state.widthScreen < 500) ? 1 : 2/3
             }}>
                 <List dense={true}>
                     { this.state.churches.map((church, index) => (
@@ -113,6 +133,7 @@ class ChurchesConfig extends React.Component {
                                fullWidth
                                sx={{mr: 2}}
                                value={this.state.currentAdded}
+                               required
                                onChange={(e)=>this.setState({currentAdded: e.target.value})}
                     />
                     <Button variant="contained"

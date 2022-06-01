@@ -14,7 +14,7 @@ class Members extends React.Component {
             date: "",
             time: "",
             success: true,
-            notification: true
+            notification: false
         }
     }
 
@@ -24,30 +24,43 @@ class Members extends React.Component {
         },1000)
     }
 
+    checkEmpty = () => {
+        return (
+            this.state.members.length === 0 ||
+            this.state.location === "" ||
+            this.state.date === "" ||
+            this.state.time === ""
+        );
+    }
+
     exportData2Firebase = () => {
-        const church = this.state.location.split(' ').reverse[0];
-        const date = new Date(this.state.date);
-        const [month, day] = [date.getMonth(), date.getDate()+1];
-        const hour = "-" + this.state.time.split(':')[0];
-        const result = doc(db, 'members', 'members-' + church + month + day + hour);
-        setDoc(result, {
-            members: this.state.members,
-            location: this.state.location,
-            date: this.state.date,
-            time: this.state.time,
-        }, {merge: true}).then(r => {
-            console.log("Succeeded export to firestore!");
-            this.setState({
-                success: true,
-                notification: true,
-            });
-        }).catch(e => {
-            console.log(e);
-            this.setState({
-                success: false,
-                notification: true,
-            });
-        })
+        const errorConfig = {
+            success: false,
+            notification: true,
+        }
+        if (this.checkEmpty()) this.setState(errorConfig)
+        else {
+            const church = this.state.location.split(' ').reverse[0];
+            const date = new Date(this.state.date);
+            const [month, day] = [date.getMonth(), date.getDate() + 1];
+            const hour = "-" + this.state.time.split(':')[0];
+            const result = doc(db, 'members', 'members-' + church + month + day + hour);
+            setDoc(result, {
+                members: this.state.members,
+                location: this.state.location,
+                date: this.state.date,
+                time: this.state.time,
+            }, {merge: true}).then(r => {
+                console.log("Succeeded export to firestore!");
+                this.setState({
+                    success: true,
+                    notification: true,
+                });
+            }).catch(e => {
+                console.log(e);
+                this.setState(errorConfig);
+            })
+        }
     }
 
     render() {

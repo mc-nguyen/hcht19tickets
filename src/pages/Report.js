@@ -11,7 +11,7 @@ import {
     TableHead,
     TableRow
 } from "@mui/material";
-import {collection, getDocs, getDoc, doc} from "firebase/firestore";
+import {collection, getDocs} from "firebase/firestore";
 import db from "../Firebase";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({

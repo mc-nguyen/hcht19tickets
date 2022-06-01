@@ -64,36 +64,57 @@ class SaleCalculator extends React.Component {
     }
 
     exportDataToFirestore = () => {
-        const church = this.state.location.split(' ').reverse[0];
-        const date = new Date(this.state.date);
-        const [month, day] = [date.getMonth(), date.getDate()+1];
-        const hour = "-" + this.state.time.split(':')[0];
-        const result = doc(db, 'ticket-results', 'result-' + church + month + day + hour);
-        setDoc(result, {
-            coordinator: this.state.coordinator,
-            location: this.state.location,
-            date: this.state.date,
-            time: this.state.time,
-            beginningChange: this.state.beginningChange,
-            totalAmount: this.state.totalAmount,
-            totalTickets: this.state.totalTickets,
-            leftTickets: this.state.leftTickets,
-            sold: this.state.sold,
-            profit: this.state.profit,
-            donation: this.state.donation
-        }, {merge: true}).then(r => {
-            console.log("Succeeded export to firestore!");
-            this.setState({
-                success: true,
-                notification: true,
-            });
-        }).catch(e => {
-            console.log(e);
-            this.setState({
-                success: false,
-                notification: true,
-            });
-        })
+        const errorConfig = {
+            success: false,
+            notification: true,
+        }
+        if (this.checkEmpty() || this.checkInputError()) this.setState(errorConfig)
+        else {
+            const church = this.state.location.split(' ').reverse[0];
+            const date = new Date(this.state.date);
+            const [month, day] = [date.getMonth(), date.getDate() + 1];
+            const hour = "-" + this.state.time.split(':')[0];
+            const result = doc(db, 'ticket-results', 'result-' + church + month + day + hour);
+            setDoc(result, {
+                coordinator: this.state.coordinator,
+                location: this.state.location,
+                date: this.state.date,
+                time: this.state.time,
+                beginningChange: this.state.beginningChange,
+                totalAmount: this.state.totalAmount,
+                totalTickets: this.state.totalTickets,
+                leftTickets: this.state.leftTickets,
+                sold: this.state.sold,
+                profit: this.state.profit,
+                donation: this.state.donation
+            }, {merge: true}).then(r => {
+                console.log("Succeeded export to firestore!");
+                this.setState({
+                    success: true,
+                    notification: true,
+                });
+            }).catch(e => {
+                console.log(e);
+                this.setState(errorConfig);
+            })
+        }
+    }
+
+    checkEmpty = () => {
+        return (this.state.coordinator === '' ||
+            this.state.location === '' ||
+            this.state.date === ''||
+            this.state.time === ''||
+            this.state.beginningChange === 0 ||
+            this.state.totalAmount === 0 ||
+            this.state.totalTickets === 0 ||
+            this.state.leftTickets === 0);
+    }
+
+    checkInputError = () => {
+        return (this.state.sold < 0 ||
+            this.state.profit < 0 ||
+            this.state.donation < 0);
     }
 
     render() {

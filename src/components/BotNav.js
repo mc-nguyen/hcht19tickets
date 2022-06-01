@@ -39,7 +39,7 @@ class BotNav extends React.Component {
                             aria-controls={this.state.open ? 'basic-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={this.state.open ? 'true' : undefined}
-                            sx={{ mr: 2, ml: '5%' }}
+                            sx={{ mr: 2 }}
                             onClick={(e) => this.setState({
                                 anchor: e.target,
                                 open: Boolean(e.target)
